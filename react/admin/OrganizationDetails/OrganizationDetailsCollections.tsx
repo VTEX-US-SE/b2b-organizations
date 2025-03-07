@@ -1,17 +1,40 @@
 import type { ChangeEvent } from 'react'
 import React, { Fragment, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { PageBlock, Table } from 'vtex.styleguide'
+import { PageBlock, Table, Dropdown } from 'vtex.styleguide'
 import { useQuery } from 'react-apollo'
+import { useRuntime } from 'vtex.render-runtime'
 
+// import type { CellRendererProps } from '../OrganizationDetails'
 import { organizationMessages as messages } from '../utils/messages'
 import { organizationBulkAction } from '../utils/organizationBulkAction'
+import GET_ORGANIZATION from '../../graphql/getOrganization.graphql'
 import GET_COLLECTIONS from '../../graphql/getCollections.graphql'
+import GET_COST_CENTERS from '../../graphql/getCostCentersByOrganizationId.graphql'
 
 export interface Collection {
   collectionId: string
   name: string
 }
+
+interface DropdownOption {
+  value: string
+  label: string
+}
+
+
+interface SelectedOrgCostCenterDetails {
+  id: string
+  orgId: string
+  costId: string
+  name: string
+}
+
+// interface CostCenterSimple {
+//   id: string
+//   name: string
+//   addresses: Address[]
+// }
 
 const OrganizationDetailsCollections = ({
   getSchema,
@@ -26,6 +49,12 @@ const OrganizationDetailsCollections = ({
    * Hooks
    */
   const { formatMessage } = useIntl()
+
+  const {
+    // culture: { country },
+    route: { params },
+    // navigate,
+  } = useRuntime()
   /**
    * States
    */
@@ -36,9 +65,36 @@ const OrganizationDetailsCollections = ({
     pageSize: 25,
   })
 
+  const [costOrgCenterState, setOrgCostCenterState] = useState({} as SelectedOrgCostCenterDetails)
+
+  const [orgOptions, setOrgOptions] = useState(
+    [] as DropdownOption[]
+  )
+
+  const [costCenterOptions, setCostCenterOptions] = useState(
+    [] as DropdownOption[]
+  )
+
+  const [combinedOptions, setCombinedOptions] = useState([] as DropdownOption[]);
+
+  // const [costCenterPaginationState, setCostCenterPaginationState] = useState({
+  //   page: 1,
+  //   pageSize: 25,
+  // })
+
   /**
    * Queries
    */
+  const { data: organizationData } = useQuery(
+    GET_ORGANIZATION,{
+    variables: { id: params?.id },
+    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
+    skip: !params?.id,
+    ssr: false,
+    }
+  )
+
   const {
     data: collectionsData,
     refetch: refetchCollections,
@@ -49,9 +105,39 @@ const OrganizationDetailsCollections = ({
     ssr: false,
   })
 
+  const {
+    data: costCentersData,
+    // refetch: refetchCostCenters,
+    loading:costCenterLoading,
+  } = useQuery(GET_COST_CENTERS, {
+    // variables: { ...costCenterPaginationState, id: params?.id },
+    variables: { id: params?.id },
+
+    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
+    skip: !params?.id,
+    ssr: false,
+  })
+
   /**
    * Effects
    */
+
+  console.log("costCenterState", setOrgCostCenterState)
+  console.log("collectionsData", collectionsData)
+  console.log("orgOptions", orgOptions)
+
+  useEffect(() => {
+    if (!organizationData?.getOrganizationById) {
+      return
+    }
+
+    const data = organizationData?.getOrganizationById
+  
+    const options = [{ label: data.name, value: data.id }]
+  
+    setOrgOptions([...options])
+  }, [organizationData])
 
   useEffect(() => {
     if (!collectionsData?.collections?.items?.length) {
@@ -66,9 +152,45 @@ const OrganizationDetailsCollections = ({
     setCollectionOptions(collections)
   }, [collectionsData])
 
+  useEffect(() => {
+      if (
+        !costCentersData?.getCostCentersByOrganizationId?.data?.length
+      ) {
+        return
+      }
+  
+      const data = costCentersData.getCostCentersByOrganizationId.data
+  
+      const options = data.map((costCenter: any) => {
+        return { label: costCenter.name + " - CC", value: costCenter.id }
+      })
+  
+      setCostCenterOptions([...options])
+    }, [costCentersData])
+
+  useEffect(() => {
+    setCombinedOptions([...orgOptions, ...costCenterOptions]);
+  }, [orgOptions, costCenterOptions]);
+
   /**
    * Functions
    */
+    // const getCostCenterSchema = () => ({
+    //   properties: {
+    //     name: {
+    //       title: formatMessage(messages.detailsColumnName),
+    //     },
+    //     addresses: {
+    //       title: formatMessage(messages.columnAddresses),
+    //       cellRenderer: ({
+    //         rowData: { addresses },
+    //       }: CellRendererProps<CostCenterSimple>) => (
+    //         <span>{addresses.length}</span>
+    //       ),
+    //     },
+    //   },
+    // })
+
   const handleRemoveCollections = (rowParams: any) => {
     const { selectedRows = [] } = rowParams
     const collectionsToRemove = [] as string[]
@@ -129,6 +251,7 @@ const OrganizationDetailsCollections = ({
       pageSize: +value,
     })
   }
+  
 
   const handleAddCollections = (rowParams: any) => {
     const { selectedRows = [] } = rowParams
@@ -154,6 +277,17 @@ const OrganizationDetailsCollections = ({
           <h4 className="t-heading-4 mt0 mb0">
             <FormattedMessage id="admin/b2b-organizations.organization-details.assigned-to-org" />
           </h4>
+          <div className="w-100 mv6">
+            <Dropdown
+              placeholder={"Choose Organization/Cost Center"}
+              disabled={costCenterLoading}
+              options={combinedOptions}
+              value={costOrgCenterState.id}
+              onChange={(_: any, v: string) =>
+                setOrgCostCenterState({ ...costOrgCenterState, id: v })
+              }
+            />
+          </div>
           <Table
             fullWidth
             schema={getSchema()}
@@ -169,6 +303,17 @@ const OrganizationDetailsCollections = ({
           <h4 className="t-heading-4 mt0 mb0">
             <FormattedMessage id="admin/b2b-organizations.organization-details.available" />
           </h4>
+          <div className="w-100 mv6">
+            <Dropdown
+              placeholder={"Choose Organization/Cost Center"}
+              disabled={costCenterLoading}
+              options={combinedOptions}
+              value={costOrgCenterState.id}
+              onChange={(_: any, v: string) =>
+                setOrgCostCenterState({ ...costOrgCenterState, id: v })
+              }
+            />
+          </div>
           <Table
             fullWidth
             schema={getSchema('availableCollections')}
@@ -197,7 +342,9 @@ const OrganizationDetailsCollections = ({
             }}
             bulkActions={organizationBulkAction(
               handleAddCollections,
-              messages.addToOrg,
+              {
+                id: `Add to orgs`,
+              },
               formatMessage
             )}
           />
