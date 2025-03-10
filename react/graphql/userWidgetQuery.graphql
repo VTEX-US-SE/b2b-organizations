@@ -1,6 +1,6 @@
 query userWidgetQuery($orgId: ID) {
   getActiveOrganizationsByEmail
-    @context(provider: "demob2bstore.b2b-organizations-graphql") {
+    @context(provider: "vtex.b2b-organizations-graphql") {
     id
     costCenterName
     costId
@@ -23,7 +23,7 @@ query userWidgetQuery($orgId: ID) {
   }
 
   getOrganizationByIdStorefront(id: $orgId)
-    @context(provider: "demob2bstore.b2b-organizations-graphql") {
+    @context(provider: "vtex.b2b-organizations-graphql") {
     id
     name
     status
@@ -34,7 +34,7 @@ query userWidgetQuery($orgId: ID) {
   }
 
   getCostCenterByIdStorefront(id: $orgId)
-    @context(provider: "demob2bstore.b2b-organizations-graphql") {
+    @context(provider: "vtex.b2b-organizations-graphql") {
     id
     name
     organization
@@ -67,7 +67,7 @@ query userWidgetQuery($orgId: ID) {
     email
   }
 
-  getB2BSettings @context(provider: "demob2bstore.b2b-organizations-graphql") {
+  getB2BSettings @context(provider: "vtex.b2b-organizations-graphql") {
     uiSettings {
       showModal
       fullImpersonation

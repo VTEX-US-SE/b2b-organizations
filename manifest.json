@@ -1,7 +1,7 @@
 {
   "name": "b2b-organizations",
-  "vendor": "demob2bstore",
-  "version": "0.0.1",
+  "vendor": "vtex",
+  "version": "1.39.11",
   "title": "B2B Organizations",
   "description": "App to create and manage B2B Organizations and Cost Centers",
   "mustUpdateAt": "2022-08-28",
@@ -9,7 +9,7 @@
     "postreleasy": "vtex publish"
   },
   "dependencies": {
-    "demob2bstore.b2b-organizations-graphql": "0.x",
+    "vtex.b2b-organizations-graphql": "0.x",
     "vtex.catalog-graphql": "1.x",
     "vtex.admin-graphql": "2.x",
     "vtex.store-graphql": "2.x",

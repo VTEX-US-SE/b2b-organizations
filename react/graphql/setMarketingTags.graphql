@@ -1,6 +1,6 @@
 mutation SetMarketingTags($costId: ID!, $tags: [String]!) {
   setMarketingTags(costId: $costId, tags: $tags)
-    @context(provider: "demob2bstore.b2b-organizations-graphql") {
+    @context(provider: "vtex.b2b-organizations-graphql") {
     message
     status
   }
