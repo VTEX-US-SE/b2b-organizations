@@ -5,7 +5,6 @@ import { PageBlock, Table, Dropdown } from 'vtex.styleguide'
 import { useQuery } from 'react-apollo'
 import { useRuntime } from 'vtex.render-runtime'
 
-// import type { CellRendererProps } from '../OrganizationDetails'
 import { organizationMessages as messages } from '../utils/messages'
 import { organizationBulkAction } from '../utils/organizationBulkAction'
 import GET_ORGANIZATION from '../../graphql/getOrganization.graphql'
@@ -17,12 +16,6 @@ export interface Collection {
   name: string
 }
 
-interface DropdownOption {
-  value: string
-  label: string
-}
-
-
 interface SelectedOrgCostCenterDetails {
   id: string
   orgId: string
@@ -30,20 +23,25 @@ interface SelectedOrgCostCenterDetails {
   name: string
 }
 
-// interface CostCenterSimple {
-//   id: string
-//   name: string
-//   addresses: Address[]
-// }
+interface DropdownOption {
+  value: string
+  label: string
+}
 
 const OrganizationDetailsCollections = ({
   getSchema,
   collectionsState,
   setCollectionsState,
+  orgCostCenterState,
+  setOrgCostCenterState,
+  isOrganizationView
 }: {
   getSchema: (argument?: any) => any
   collectionsState: Collection[]
   setCollectionsState: (value: any) => void
+  orgCostCenterState: SelectedOrgCostCenterDetails
+  setOrgCostCenterState: (value: any) => void
+  isOrganizationView: boolean
 }) => {
   /**
    * Hooks
@@ -65,8 +63,6 @@ const OrganizationDetailsCollections = ({
     pageSize: 25,
   })
 
-  const [costOrgCenterState, setOrgCostCenterState] = useState({} as SelectedOrgCostCenterDetails)
-
   const [orgOptions, setOrgOptions] = useState(
     [] as DropdownOption[]
   )
@@ -77,15 +73,16 @@ const OrganizationDetailsCollections = ({
 
   const [combinedOptions, setCombinedOptions] = useState([] as DropdownOption[]);
 
-  // const [costCenterPaginationState, setCostCenterPaginationState] = useState({
-  //   page: 1,
-  //   pageSize: 25,
-  // })
+  //hard coding labels. We have to use locale later
+  const OrgCostAddLabel = isOrganizationView ? "Add to org" : "Add to CC";
+  const OrgCostRemoveLabel = isOrganizationView ? "Remove from org" : "Remove from CC";
+  const OrgCostAssignLabel = isOrganizationView ? "Assigned to organization" : "Assigned to cost center";
+  const prefixIndex = 0;
 
   /**
    * Queries
    */
-  const { data: organizationData } = useQuery(
+  const { data: organizationData, loading: orgLoading } = useQuery(
     GET_ORGANIZATION,{
     variables: { id: params?.id },
     fetchPolicy: 'network-only',
@@ -107,10 +104,8 @@ const OrganizationDetailsCollections = ({
 
   const {
     data: costCentersData,
-    // refetch: refetchCostCenters,
     loading:costCenterLoading,
   } = useQuery(GET_COST_CENTERS, {
-    // variables: { ...costCenterPaginationState, id: params?.id },
     variables: { id: params?.id },
 
     fetchPolicy: 'network-only',
@@ -123,10 +118,6 @@ const OrganizationDetailsCollections = ({
    * Effects
    */
 
-  console.log("costCenterState", setOrgCostCenterState)
-  console.log("collectionsData", collectionsData)
-  console.log("orgOptions", orgOptions)
-
   useEffect(() => {
     if (!organizationData?.getOrganizationById) {
       return
@@ -137,6 +128,7 @@ const OrganizationDetailsCollections = ({
     const options = [{ label: data.name, value: data.id }]
   
     setOrgOptions([...options])
+
   }, [organizationData])
 
   useEffect(() => {
@@ -162,7 +154,9 @@ const OrganizationDetailsCollections = ({
       const data = costCentersData.getCostCentersByOrganizationId.data
   
       const options = data.map((costCenter: any) => {
-        return { label: costCenter.name + " - CC", value: costCenter.id }
+        const prefixSpace = "\u00A0\u00A0\u00A0"; //quick fix has provided for cost center alignment. Will check this style issue later
+        const prefixCC = " - CC";
+        return { label: prefixSpace + costCenter.name + prefixCC, value: costCenter.id }
       })
   
       setCostCenterOptions([...options])
@@ -175,21 +169,6 @@ const OrganizationDetailsCollections = ({
   /**
    * Functions
    */
-    // const getCostCenterSchema = () => ({
-    //   properties: {
-    //     name: {
-    //       title: formatMessage(messages.detailsColumnName),
-    //     },
-    //     addresses: {
-    //       title: formatMessage(messages.columnAddresses),
-    //       cellRenderer: ({
-    //         rowData: { addresses },
-    //       }: CellRendererProps<CostCenterSimple>) => (
-    //         <span>{addresses.length}</span>
-    //       ),
-    //     },
-    //   },
-    // })
 
   const handleRemoveCollections = (rowParams: any) => {
     const { selectedRows = [] } = rowParams
@@ -270,31 +249,50 @@ const OrganizationDetailsCollections = ({
     setCollectionsState([...collectionsState, ...newCollections])
   }
 
+  const handleOrgCostCenterChange = (_: any, v: string) => {
+    setOrgCostCenterState((prevState:any) => ({ ...prevState, id: v }));
+    const newPage = 1
+    setCollectionPaginationState({
+      ...collectionPaginationState,
+      page: newPage,
+    })
+
+    refetchCollections({
+      ...collectionPaginationState,
+      page: newPage,
+    })
+  };
+
   return (
     <Fragment>
-      <PageBlock variation="half" title={formatMessage(messages.collections)}>
+      <h2 className="mt6 t-heading-3">
+        {formatMessage(messages.collections)}
+      </h2>
+      <div className="flex justify-between items-center mt6 mb6">
+        <Dropdown
+          label="Choose Organization/Cost Center"
+          placeholder={"Choose"}
+          disabled={orgLoading || costCenterLoading}
+          options={combinedOptions}
+          value={orgCostCenterState?.id ? orgCostCenterState?.id : combinedOptions[prefixIndex]?.value}
+          onChange={handleOrgCostCenterChange}
+        />
+      </div>
+      <PageBlock variation="half">
         <div>
           <h4 className="t-heading-4 mt0 mb0">
-            <FormattedMessage id="admin/b2b-organizations.organization-details.assigned-to-org" />
+          {OrgCostAssignLabel}
+            {/* <FormattedMessage id="admin/b2b-organizations.organization-details.assigned-to-org" /> */}
           </h4>
-          <div className="w-100 mv6">
-            <Dropdown
-              placeholder={"Choose Organization/Cost Center"}
-              disabled={costCenterLoading}
-              options={combinedOptions}
-              value={costOrgCenterState.id}
-              onChange={(_: any, v: string) =>
-                setOrgCostCenterState({ ...costOrgCenterState, id: v })
-              }
-            />
-          </div>
           <Table
             fullWidth
             schema={getSchema()}
             items={collectionsState}
             bulkActions={organizationBulkAction(
               handleRemoveCollections,
-              messages.removeFromOrg,
+              {
+                id: OrgCostRemoveLabel,
+              },
               formatMessage
             )}
           />
@@ -303,17 +301,6 @@ const OrganizationDetailsCollections = ({
           <h4 className="t-heading-4 mt0 mb0">
             <FormattedMessage id="admin/b2b-organizations.organization-details.available" />
           </h4>
-          <div className="w-100 mv6">
-            <Dropdown
-              placeholder={"Choose Organization/Cost Center"}
-              disabled={costCenterLoading}
-              options={combinedOptions}
-              value={costOrgCenterState.id}
-              onChange={(_: any, v: string) =>
-                setOrgCostCenterState({ ...costOrgCenterState, id: v })
-              }
-            />
-          </div>
           <Table
             fullWidth
             schema={getSchema('availableCollections')}
@@ -343,7 +330,7 @@ const OrganizationDetailsCollections = ({
             bulkActions={organizationBulkAction(
               handleAddCollections,
               {
-                id: `Add to orgs`,
+                id: OrgCostAddLabel,
               },
               formatMessage
             )}

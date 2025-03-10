@@ -21,7 +21,7 @@ mutation UpdateOrganization(
     salesChannel: $salesChannel
     sellers: $sellers
     customFields: $customFields
-  ) @context(provider: "vtex.b2b-organizations-graphql") {
+  ) @context(provider: "demob2bstore.b2b-organizations-graphql") {
     id
     status
     message

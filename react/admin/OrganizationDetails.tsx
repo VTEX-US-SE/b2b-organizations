@@ -18,10 +18,12 @@ import { useRuntime } from 'vtex.render-runtime'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 import unionBy from 'lodash/unionBy'
 
-import { organizationMessages as messages } from './utils/messages'
+import { organizationMessages as messages , costCenterMessages as ccMessages,} from './utils/messages'
 import GET_ORGANIZATION from '../graphql/getOrganization.graphql'
 import UPDATE_ORGANIZATION from '../graphql/updateOrganization.graphql'
+import UPDATE_COST_CENTER from '../graphql/updateCostCenter.graphql'
 import GET_B2B_CUSTOM_FIELDS from '../graphql/getB2BCustomFields.graphql'
+import GET_COST_CENTER from '../graphql/getCostCenter.graphql'
 import OrganizationDetailsCostCenters from './OrganizationDetails/OrganizationDetailsCostCenters'
 import type { Collection } from './OrganizationDetails/OrganizationDetailsCollections'
 import OrganizationDetailsCollections from './OrganizationDetails/OrganizationDetailsCollections'
@@ -42,6 +44,13 @@ export interface CellRendererProps<RowType> {
   cellData: unknown
   rowData: RowType
   updateCellMeasurements: () => void
+}
+
+interface SelectedOrgCostCenterDetails {
+  id: string
+  orgId: string
+  costId: string
+  name: string
 }
 
 export type AvailabilityTypes =
@@ -86,6 +95,7 @@ const OrganizationDetails: FunctionComponent = () => {
   const [priceTablesState, setPriceTablesState] = useState([] as string[])
   const [salesChannelState, setSalesChannelState] = useState('')
   const [sellersState, setSellersState] = useState([] as Seller[])
+  const [orgCostCenterState, setOrgCostCenterState] = useState({} as SelectedOrgCostCenterDetails)
   const [errorState, setErrorState] = useState('')
   const [paymentTermsState, setPaymentTermsState] = useState(
     [] as PaymentTerm[]
@@ -100,6 +110,8 @@ const OrganizationDetails: FunctionComponent = () => {
   const [loadingState, setLoadingState] = useState(false)
 
   const [customFieldsState, setCustomFieldsState] = useState<CustomField[]>([])
+
+  const isOrganizationView = !Object.keys(orgCostCenterState).length || orgCostCenterState?.id === params?.id
 
   /**
    * Queries
@@ -134,14 +146,74 @@ const OrganizationDetails: FunctionComponent = () => {
     ssr: false,
   })
 
+  const { data:costCenterData } = useQuery(GET_COST_CENTER, {
+    variables: { id: orgCostCenterState?.id },
+    skip: !orgCostCenterState?.id,
+    ssr: false,
+  })
+
   /**
    * Mutations
    */
   const [updateOrganization] = useMutation(UPDATE_ORGANIZATION)
+  const [updateCostCenter] = useMutation(UPDATE_COST_CENTER)
 
   /**
    * Functions
    */
+
+  const manageOrgCostCenterUpdate= () => {
+    if(isOrganizationView){
+      handleUpdateOrganization()
+      
+    }else{
+      //update cost center
+      handleUpdateCostCenter()
+    }
+  }
+
+    const handleUpdateCostCenter = () => {
+      const costCenterDetails = costCenterData?.getCostCenterById;
+      setLoadingState(true)
+      const collections = collectionsState.map(collection => {
+        return { name: collection.name, id: collection.collectionId }
+      })
+
+      costCenterDetails?.addresses.sort((item:any) => (item.checked ? -1 : 1))
+      const variables = {
+        id: orgCostCenterState?.id,
+        input: {
+          name: costCenterDetails?.name,
+          addresses: costCenterDetails?.addresses.map((item:any) => {
+            delete item.checked
+  
+            return item
+          }),
+          collections,
+          phoneNumber:costCenterDetails?.phoneNumber,
+          businessDocument:costCenterDetails?.businessDocument,
+        },
+      }
+  
+      updateCostCenter({ variables })
+        .then(() => {
+          showToast({
+            variant: 'positive',
+            message: formatMessage(ccMessages.toastUpdateSuccess),
+          })
+          refetch({ id: params?.id })
+          setLoadingState(false)
+        })
+        .catch(error => {
+          console.error(error)
+          showToast({
+            variant: 'critical',
+            message: formatMessage(ccMessages.toastUpdateFailure),
+          })
+          setLoadingState(false)
+        })
+    }
+
   const handleUpdateOrganization = () => {
     setErrorState('')
 
@@ -201,6 +273,38 @@ const OrganizationDetails: FunctionComponent = () => {
       })
   }
 
+  const extractCollections = (
+    data: any,
+    orgCostCenterState: any
+  ) => {
+    if (!data?.getOrganizationById) return { collectionsOrg: [], collectionsCC: [] };
+  
+    // Extract collections from the organization
+    const collectionsOrg =
+      data.getOrganizationById.collections?.map(
+        (collection: { name: string; id: string }) => ({
+          name: collection.name,
+          collectionId: collection.id,
+        })
+      ) ?? [];
+  
+    // Extract collections from the matched cost center
+    const matchedCollectionsCC =
+      data?.getOrganizationById?.costCenters?.find(
+        (center: any) => center.id === orgCostCenterState?.id
+      )?.collections || [];
+  
+    const collectionsCC =
+      matchedCollectionsCC.map(
+        (collection: { name: string; id: string }) => ({
+          name: collection.name,
+          collectionId: collection.id,
+        })
+      ) ?? [];
+  
+    return { collectionsOrg, collectionsCC };
+  };
+
   const getSchema = (type?: AvailabilityTypes) => {
     let cellRenderer
 
@@ -225,6 +329,7 @@ const OrganizationDetails: FunctionComponent = () => {
         cellRenderer = ({
           rowData: { name },
         }: CellRendererProps<Collection>) => {
+
           const assigned = collectionsState.some(
             collection => collection.name === name
           )
@@ -293,15 +398,10 @@ const OrganizationDetails: FunctionComponent = () => {
    * Effects
    */
   useEffect(() => {
-    if (!data?.getOrganizationById || statusState) return
+    if (!data?.getOrganizationById) return
 
-    const collections =
-      data.getOrganizationById.collections?.map(
-        (collection: { name: string; id: string }) => {
-          return { name: collection.name, collectionId: collection.id }
-        }
-      ) ?? []
-
+    const collectionsGroup = extractCollections(data, orgCostCenterState)
+    const collections = isOrganizationView ? collectionsGroup?.collectionsOrg : collectionsGroup?.collectionsCC
     const paymentTerms =
       data.getOrganizationById.paymentTerms?.map(
         (paymentTerm: { name: string; id: string }) => {
@@ -312,7 +412,7 @@ const OrganizationDetails: FunctionComponent = () => {
     setOrganizationNameState(data.getOrganizationById.name)
     setOrganizationTradeNameState(data.getOrganizationById.tradeName ?? '')
     setStatusState(data.getOrganizationById.status)
-    setCollectionsState(collections)
+    setCollectionsState(collections);
     setPaymentTermsState(paymentTerms)
     setPriceTablesState(data.getOrganizationById.priceTables ?? [])
     setSalesChannelState(data.getOrganizationById.salesChannel ?? '')
@@ -324,7 +424,14 @@ const OrganizationDetails: FunctionComponent = () => {
         })
       ) ?? []
     )
-  }, [data])
+  }, [data, orgCostCenterState])
+
+  useEffect(() => {
+    if(!costCenterData?.getCostCenterById?.organization) return
+      const collectionsGroup = extractCollections(data, orgCostCenterState)
+      const collections = isOrganizationView ? collectionsGroup?.collectionsOrg : collectionsGroup?.collectionsCC
+      setCollectionsState(collections)
+  }, [orgCostCenterState, costCenterData])
 
   useEffect(() => {
     const customFieldsToShow = joinById(
@@ -381,6 +488,9 @@ const OrganizationDetails: FunctionComponent = () => {
           getSchema={getSchema}
           collectionsState={collectionsState}
           setCollectionsState={setCollectionsState}
+          orgCostCenterState={orgCostCenterState}
+          setOrgCostCenterState={setOrgCostCenterState}
+          isOrganizationView={isOrganizationView}
         />
       ),
     },
@@ -469,7 +579,7 @@ const OrganizationDetails: FunctionComponent = () => {
           <Button
             variation="primary"
             isLoading={loadingState}
-            onClick={() => handleUpdateOrganization()}
+            onClick={() => manageOrgCostCenterUpdate()}
           >
             <FormattedMessage id="admin/b2b-organizations.organization-details.button.save" />
           </Button>
