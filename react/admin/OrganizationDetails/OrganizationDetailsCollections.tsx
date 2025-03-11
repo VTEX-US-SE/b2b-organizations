@@ -6,7 +6,7 @@ import { useQuery } from 'react-apollo'
 import { useRuntime } from 'vtex.render-runtime'
 
 import { organizationMessages as messages } from '../utils/messages'
-import { organizationBulkAction } from '../utils/organizationBulkAction'
+import { organizationBulkActionExtend } from '../utils/organizationBulkAction'
 import GET_ORGANIZATION from '../../graphql/getOrganization.graphql'
 import GET_COLLECTIONS from '../../graphql/getCollections.graphql'
 import GET_COST_CENTERS from '../../graphql/getCostCentersByOrganizationId.graphql'
@@ -72,6 +72,8 @@ const OrganizationDetailsCollections = ({
   )
 
   const [combinedOptions, setCombinedOptions] = useState([] as DropdownOption[]);
+  const [selectedAssignedRows, setSelectedAssignedRows] = useState([]);
+  const [selectedAvailableRows, setSelectedAvailableRows] = useState([]);
 
   //hard coding labels. We have to use locale later
   const OrgCostAddLabel = isOrganizationView ? "Add to org" : "Add to CC";
@@ -251,6 +253,8 @@ const OrganizationDetailsCollections = ({
 
   const handleOrgCostCenterChange = (_: any, v: string) => {
     setOrgCostCenterState((prevState:any) => ({ ...prevState, id: v }));
+    setSelectedAssignedRows([])
+    setSelectedAvailableRows([])
     const newPage = 1
     setCollectionPaginationState({
       ...collectionPaginationState,
@@ -262,6 +266,15 @@ const OrganizationDetailsCollections = ({
       page: newPage,
     })
   };
+
+  const handleCallbackSelectedAssignedRows =(params:any)=>{
+    setSelectedAssignedRows(params?.selectedRows)
+  }
+
+  const handleCallbackSelectedAvailableRows = (params:any)=>{
+    setSelectedAvailableRows(params?.selectedRows)
+  }
+
 
   return (
     <Fragment>
@@ -288,12 +301,14 @@ const OrganizationDetailsCollections = ({
             fullWidth
             schema={getSchema()}
             items={collectionsState}
-            bulkActions={organizationBulkAction(
+            bulkActions={organizationBulkActionExtend(
               handleRemoveCollections,
               {
                 id: OrgCostRemoveLabel,
               },
-              formatMessage
+              formatMessage,
+              selectedAvailableRows,
+              handleCallbackSelectedAvailableRows
             )}
           />
         </div>
@@ -327,12 +342,14 @@ const OrganizationDetailsCollections = ({
               totalItems: collectionsData?.collections?.paging?.total ?? 0,
               rowsOptions: [25, 50],
             }}
-            bulkActions={organizationBulkAction(
+            bulkActions={organizationBulkActionExtend(
               handleAddCollections,
               {
                 id: OrgCostAddLabel,
               },
-              formatMessage
+              formatMessage,
+              selectedAssignedRows,
+              handleCallbackSelectedAssignedRows
             )}
           />
         </div>
