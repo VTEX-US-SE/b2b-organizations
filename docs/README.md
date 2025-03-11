@@ -165,7 +165,7 @@ The **B2B Organizations** app adds the following functionalities and components 
   </tr>
   <tr>
     <td rowspan="5">Organization Details page</td>
-    <td>Manage Cost Centers associated with organizations</td>
+    <td>Manage Organization Units associated with organizations</td>
   </tr>
   <tr>
     <td>Manage Collections associated with organizations</td>
@@ -200,7 +200,7 @@ The **B2B Organizations** app adds the following functionalities and components 
     <td>Manage Organization</td>
   </tr>
   <tr>
-    <td>Manage Cost Centers</td>
+    <td>Manage Organization Units</td>
   </tr>
   <tr>
     <td>Manage Users</td>
@@ -219,13 +219,13 @@ The **B2B Organizations** app adds the following functionalities and components 
 
 ### VTEX Admin
 
-After installing and setting up the **B2B Organizations** app, its VTEX Admin capabilities can be found by accessing **Account Settings > B2B Organizations & Cost Centers**.
+After installing and setting up the **B2B Organizations** app, its VTEX Admin capabilities can be found by accessing **Account Settings > B2B Organizations & Organization Units**.
 
 #### Organization Requests
 
 To request the creation of an organization, B2B customers can use the page available at `/organization-request`. This page allows customers to request an organization creation and its organization unit. Add `/organization-request` to your store’s domain to access it.
 
-Once this step is done by the customer, B2B store administrators may review the organization request by going to **VTEX Admin** > **Account Settings** > **B2B Organizations & Cost Centers** > **Organization Requests** (or at `/admin/b2b-organizations/requests`).
+Once this step is done by the customer, B2B store administrators may review the organization request by going to **VTEX Admin** > **Account Settings** > **B2B Organizations & Organization Units** > **Organization Requests** (or at `/admin/b2b-organizations/requests`).
 
 In this page, they can view a list of all the organization requests placed in their store.
 
@@ -252,7 +252,7 @@ The **Organizations** page includes a list of all the organizations created in y
 - [Add organizations](#add-organization).
 - Access the [Organization details](#organization-details) page, which includes organization data, organization units, collections, payment terms, price tables and users.
 
-To access the page, go to **Account Settings** > **B2B Organizations & Cost Centers** > **Organizations** in the VTEX Admin (or at `/admin/b2b-organizations/organizations`).
+To access the page, go to **Account Settings** > **B2B Organizations & Organization Units** > **Organizations** in the VTEX Admin (or at `/admin/b2b-organizations/organizations`).
 
 ![04-organizations](https://user-images.githubusercontent.com/77292838/159766661-63f7191a-51c4-49d7-a34d-d909456f2692.png)
 
@@ -292,13 +292,13 @@ You can manually create a new organization on the **Organizations** page. Follow
 In the **Organizations Details** page, you can see and edit the information of an existing organization:
 
 - [Organization Name and Status](#organization-name-and-status)
-- [Cost Centers](#cost-centers)
+- [Organization Units](#cost-centers)
 - [Collections](#collections)
 - [Payment Terms](#payment-terms)
 - [Price Tables](#price-tables)
 - [Users ](#users)
 
-You can access this page by going to **Account Settings** > **B2B Organizations & Cost Centers** > **Organizations** in the VTEX Admin and clicking on the organization whose details you want to view, or on <img src="https://user-images.githubusercontent.com/77292838/159766633-dfcb818f-6bd7-4cd0-92dc-9c682fb50d04.png" width="10" alt-text="00-ellipsis"/> > `View`.
+You can access this page by going to **Account Settings** > **B2B Organizations & Organization Units** > **Organizations** in the VTEX Admin and clicking on the organization whose details you want to view, or on <img src="https://user-images.githubusercontent.com/77292838/159766633-dfcb818f-6bd7-4cd0-92dc-9c682fb50d04.png" width="10" alt-text="00-ellipsis"/> > `View`.
 
 > ℹ️ Note that assigning collections, payment terms, and price tables to an organization is optional. If these are not assigned, users of the organization will see the stores default catalog, have access to all payment methods, and see the store's default pricing.
 
@@ -312,15 +312,15 @@ In the top section of the page, you can view the following information:
 
 ![06-organization-name-status](https://user-images.githubusercontent.com/77292838/159766675-bd899388-7537-427d-af37-fc048aaf8636.png)
 
-##### Cost Centers
+##### Organization Units
 
-In the **Cost Centers** section, you can view all the organization units associated with the organization. VTEX Admin users can view and manage organization units for any organization.
+In the **Organization Units** section, you can view all the organization units associated with the organization. VTEX Admin users can view and manage organization units for any organization.
 
 ![07-cost-centers](https://user-images.githubusercontent.com/77292838/159766678-0fd6c361-e1e6-470b-a9fc-c98b530c05e9.png)
 
 > ℹ️ Each organization must have at least one organization unit.
 
-By default, each organization unit will allow all of the [payment terms](#payment-terms) that have been assigned to the parent organization. However, **Organization Admin** users have the ability to enable or disable individual payment terms at the organization unit level  see [Manage Cost Centers](#manage-cost-centers) for more information on this.
+By default, each organization unit will allow all of the [payment terms](#payment-terms) that have been assigned to the parent organization. However, **Organization Admin** users have the ability to enable or disable individual payment terms at the organization unit level  see [Manage Organization Units](#manage-cost-centers) for more information on this.
 
 To create a new organization unit, follow the steps below.
 
@@ -390,7 +390,7 @@ To remove a collection, select the collection you want to remove from the **Assi
 
 In this section, you can choose which [payment conditions](https://help.vtex.com/en/tutorial/how-to-configure-payment-conditions--tutorials_455?&utm_source=autocomplete) are assigned to the organization. Your selections determine which payment options are available to organization users during checkout.
 
-Note that the available payment options can be further customized per organization unit by the **Organization Admin**. Check the [Manage Cost Centers](#manage-cost-centers) section for more information on this.
+Note that the available payment options can be further customized per organization unit by the **Organization Admin**. Check the [Manage Organization Units](#manage-cost-centers) section for more information on this.
 
 To add a payment term, select the option you want to add from the **Available** list and click `Add to org`.
 
@@ -537,14 +537,14 @@ To access **My Organization**, follow the instructions below.
 
 On this page, the user with the **Organization Admin** or **Sales Admin** roles may do the following:
 
-- [Manage Cost Centers](#manage-cost-centers)
+- [Manage Organization Units](#manage-cost-centers)
 - [Manage Users](#manage-users)
 
-##### Manage Cost Centers
+##### Manage Organization Units
 
-**Organization Admin** or **Sales Admin** storefront users can find the organization units associated with their organization in the **Cost Centers** section of the **My Organization** page.
+**Organization Admin** or **Sales Admin** storefront users can find the organization units associated with their organization in the **Organization Units** section of the **My Organization** page.
 
-To add a new organization unit, they should go to **My Account > My Organization**, where they have access to the same options described in [Cost Centers](#cost-centers). It is possible to view or edit the details of an existing organization unit by clicking on it, the same way as described in [Organization Unit Details](#cost-center-details).
+To add a new organization unit, they should go to **My Account > My Organization**, where they have access to the same options described in [Organization Units](#cost-centers). It is possible to view or edit the details of an existing organization unit by clicking on it, the same way as described in [Organization Unit Details](#cost-center-details).
 
 **Organization Admins** may also view and/or edit the **Business Document** assigned to each organization unit, as described in [Organization Unit Details](#cost-center-details).
 
