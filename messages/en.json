@@ -116,7 +116,7 @@
   "admin/b2b-organizations.organization-details.add-to-org": "Add to org",
   "admin/b2b-organizations.organization-details.add-user": "Add New User",
   "admin/b2b-organizations.organization-details.add-user.helpText": "If the email address you entered does not match an existing user account in this store, a user account will be created for them.",
-  "admin/b2b-organizations.organization-details.assigned-to-org": "Assigned to organization/organization unit",
+  "admin/b2b-organizations.organization-details.assigned-to-org": "Assigned",
   "admin/b2b-organizations.organization-details.available": "Available collections",
   "admin/b2b-organizations.organization-details.button.add": "Add",
   "admin/b2b-organizations.organization-details.button.cancel": "Cancel",
