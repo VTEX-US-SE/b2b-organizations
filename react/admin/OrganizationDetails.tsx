@@ -165,9 +165,9 @@ const OrganizationDetails: FunctionComponent = () => {
   const manageOrgCostCenterUpdate= () => {
     if(isOrganizationView){
       handleUpdateOrganization()
-      
+
     }else{
-      //update cost center
+      //update organization unit
       handleUpdateCostCenter()
     }
   }
@@ -186,7 +186,7 @@ const OrganizationDetails: FunctionComponent = () => {
           name: costCenterDetails?.name,
           addresses: costCenterDetails?.addresses.map((item:any) => {
             delete item.checked
-  
+
             return item
           }),
           collections,
@@ -194,7 +194,7 @@ const OrganizationDetails: FunctionComponent = () => {
           businessDocument:costCenterDetails?.businessDocument,
         },
       }
-  
+
       updateCostCenter({ variables })
         .then(() => {
           showToast({
@@ -278,7 +278,7 @@ const OrganizationDetails: FunctionComponent = () => {
     orgCostCenterState: any
   ) => {
     if (!data?.getOrganizationById) return { collectionsOrg: [], collectionsCC: [] };
-  
+
     // Extract collections from the organization
     const collectionsOrg =
       data.getOrganizationById.collections?.map(
@@ -287,13 +287,13 @@ const OrganizationDetails: FunctionComponent = () => {
           collectionId: collection.id,
         })
       ) ?? [];
-  
-    // Extract collections from the matched cost center
+
+    // Extract collections from the matched organization unit
     const matchedCollectionsCC =
       data?.getOrganizationById?.costCentersObj?.find(
         (center: any) => center.id === orgCostCenterState?.id
       )?.collections || [];
-  
+
     const collectionsCC =
       matchedCollectionsCC.map(
         (collection: { name: string; id: string }) => ({
@@ -301,7 +301,7 @@ const OrganizationDetails: FunctionComponent = () => {
           collectionId: collection.id,
         })
       ) ?? [];
-  
+
     return { collectionsOrg, collectionsCC };
   };
 

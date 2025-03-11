@@ -74,9 +74,9 @@ const OrganizationDetailsCollections = ({
   const [combinedOptions, setCombinedOptions] = useState([] as DropdownOption[]);
 
   //hard coding labels. We have to use locale later
-  const OrgCostAddLabel = isOrganizationView ? "Add to org" : "Add to CC";
-  const OrgCostRemoveLabel = isOrganizationView ? "Remove from org" : "Remove from CC";
-  const OrgCostAssignLabel = isOrganizationView ? "Assigned to organization" : "Assigned to cost center";
+  const OrgCostAddLabel = isOrganizationView ? "Add to org" : "Add to Organization Unit";
+  const OrgCostRemoveLabel = isOrganizationView ? "Remove from org" : "Remove from Organization Unit";
+  const OrgCostAssignLabel = isOrganizationView ? "Assigned to organization" : "Assigned to organization unit";
   const prefixIndex = 0;
 
   /**
@@ -124,9 +124,9 @@ const OrganizationDetailsCollections = ({
     }
 
     const data = organizationData?.getOrganizationById
-  
+
     const options = [{ label: data.name, value: data.id }]
-  
+
     setOrgOptions([...options])
 
   }, [organizationData])
@@ -150,15 +150,15 @@ const OrganizationDetailsCollections = ({
       ) {
         return
       }
-  
+
       const data = costCentersData.getCostCentersByOrganizationId.data
-  
+
       const options = data.map((costCenter: any) => {
-        const prefixSpace = "\u00A0\u00A0\u00A0"; //quick fix has provided for cost center alignment. Will check this style issue later
-        const prefixCC = " - CC";
+        const prefixSpace = "\u00A0\u00A0\u00A0"; //quick fix has provided for organization unit alignment. Will check this style issue later
+        const prefixCC = " - Organization Unit";
         return { label: prefixSpace + costCenter.name + prefixCC, value: costCenter.id }
       })
-  
+
       setCostCenterOptions([...options])
     }, [costCentersData])
 
@@ -230,7 +230,7 @@ const OrganizationDetailsCollections = ({
       pageSize: +value,
     })
   }
-  
+
 
   const handleAddCollections = (rowParams: any) => {
     const { selectedRows = [] } = rowParams
@@ -270,7 +270,7 @@ const OrganizationDetailsCollections = ({
       </h2>
       <div className="flex justify-between items-center mt6 mb6">
         <Dropdown
-          label="Choose Organization/Cost Center"
+          label="Choose Organization/Organization Unit"
           placeholder={"Choose"}
           disabled={orgLoading || costCenterLoading}
           options={combinedOptions}

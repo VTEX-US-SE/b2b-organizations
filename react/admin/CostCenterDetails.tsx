@@ -841,7 +841,7 @@ const CostCenterDetails: FunctionComponent = () => {
         </p>
       </ModalDialog>
 
-      {/* Delete Cost Center Modal */}
+      {/* Delete Organization Unit Modal */}
       <ModalDialog
         centered
         confirmation={{
