@@ -16,12 +16,13 @@ query GetOrganization($id: ID) {
     }
     priceTables
     salesChannel
-    costCenters {
+    costCenters
+    costCentersObj {
       id
-      collections {
+			collections{
         id
         name
-    }
+      }
     }
     sellers {
       id

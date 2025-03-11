@@ -290,7 +290,7 @@ const OrganizationDetails: FunctionComponent = () => {
   
     // Extract collections from the matched cost center
     const matchedCollectionsCC =
-      data?.getOrganizationById?.costCenters?.find(
+      data?.getOrganizationById?.costCentersObj?.find(
         (center: any) => center.id === orgCostCenterState?.id
       )?.collections || [];
   
