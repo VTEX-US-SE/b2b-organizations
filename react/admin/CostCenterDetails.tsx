@@ -12,6 +12,7 @@ import {
   ModalDialog,
   Toggle,
   Tag,
+  Table
 } from 'vtex.styleguide'
 import { useToast } from '@vtex/admin-ui'
 import { useIntl, FormattedMessage } from 'react-intl'
@@ -41,11 +42,19 @@ import GET_MARKETING_TAGS from '../graphql/getMarketingTags.graphql'
 import DELETE_COST_CENTER from '../graphql/deleteCostCenter.graphql'
 import GET_LOGISTICS from '../graphql/getLogistics.graphql'
 import GET_B2B_CUSTOM_FIELDS from '../graphql/getB2BCustomFields.graphql'
+import GET_SHIPPING_POLICIES from '../graphql/getShippingPolicies.graphql'
+
 import { joinById } from './OrganizationDetails'
 import CustomFieldInput from './OrganizationDetailsCustomField'
 import CostCenterAddressList from './CostCenterAddressList'
 
 const CSS_HANDLES = ['businessDocument', 'stateRegistration'] as const
+
+type ShippingPolicy = {
+  shippingMethod: string
+  id: string
+  name: string
+}
 
 const CostCenterDetails: FunctionComponent = () => {
   const { formatMessage } = useIntl()
@@ -95,6 +104,8 @@ const CostCenterDetails: FunctionComponent = () => {
 
   const [tags, setTags] = useState([] as string[])
   const [tagName, setTagName] = useState('')
+  const [shippingPolicies, setshippingPolicies] = useState<ShippingPolicy[]>([])
+  const [selectedPolicies, setSelectedPolicies] = useState<ShippingPolicy[]>([])
 
   const { data, loading, refetch } = useQuery(GET_COST_CENTER, {
     variables: { id: params?.id },
@@ -114,6 +125,11 @@ const CostCenterDetails: FunctionComponent = () => {
   )
 
   const { data: logisticsData } = useQuery(GET_LOGISTICS, { ssr: false })
+
+  const { data: shippingPolicesData } = useQuery(GET_SHIPPING_POLICIES, {
+    ssr: false,
+    fetchPolicy: 'network-only',
+  })
 
   useQuery(GET_MARKETING_TAGS, {
     skip: !params?.id,
@@ -185,6 +201,18 @@ const CostCenterDetails: FunctionComponent = () => {
       variables: { id: data.getCostCenterById.organization },
     })
   }, [data])
+
+
+  useEffect(() => {
+    if (shippingPolicesData?.getShippingPolicies) {
+      const formatted = shippingPolicesData.getShippingPolicies.map((method: ShippingPolicy) => ({
+        id: method.shippingMethod,
+        name: method.name,
+        shippingMethod: method.shippingMethod
+      }))
+      setshippingPolicies(formatted)
+    }
+  }, [shippingPolicesData])
 
   const navigateToParentOrganization = () => {
     navigate({
@@ -518,7 +546,7 @@ const CostCenterDetails: FunctionComponent = () => {
     setCustomFieldsState(customFieldsToShow)
   }, [
     data?.getCostCenterById?.customFields &&
-      defaultCustomFieldsData?.getB2BSettings.costCenterCustomFields,
+    defaultCustomFieldsData?.getB2BSettings.costCenterCustomFields,
   ])
 
   const handleCustomFieldsUpdate = (
@@ -529,6 +557,22 @@ const CostCenterDetails: FunctionComponent = () => {
 
     newCustomFields[index] = customField
     setCustomFieldsState(newCustomFields)
+  }
+  const shippingPolicySchema = {
+    properties: {
+      name: {
+        title: 'Name',
+        type: 'string',
+      },
+    },
+  }
+
+  const handleAdd = ({ selectedRows }: { selectedRows: ShippingPolicy[] }) => {
+    console.log("Selected Policies:", selectedRows);
+    console.log("All shipping Policies:", shippingPolicies);
+
+    setSelectedPolicies(selectedRows);
+    console.log('Selected shipping methods:', selectedRows);
   }
 
   if (!data) {
@@ -684,6 +728,38 @@ const CostCenterDetails: FunctionComponent = () => {
           handleEditAddressModal={handleEditAddressModal}
           handleDeleteAddressModal={handleDeleteAddressModal}
         />
+      </PageBlock>
+
+      <PageBlock title={"Shipping Policies"}>
+        <Table
+          fullWidth
+          items={shippingPolicies}
+          schema={shippingPolicySchema}
+          bulkActions={{
+            texts: {
+              rowsSelected: (qty: number) => <span>Selected rows: {qty}</span>,
+              selectAll: 'Select all',
+              allRowsSelected: (qty: number) => <span>All rows selected: {qty}</span>,
+            },
+            totalItems: shippingPolicies.length,
+            onChange: () => { },
+            main: {
+              label: 'Add',
+              handleCallback: handleAdd,
+            },
+          }}
+        />
+
+        {selectedPolicies.length > 0 && (
+          <div className="mt6">
+            <h4>Selected Shipping Methods:</h4>
+            <ul>
+              {selectedPolicies.map((method, idx) => (
+                <li key={idx}>{method.name}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </PageBlock>
 
       <PageBlock title={formatMessage(orgaizationMessages.customFieldsTitle)}>
