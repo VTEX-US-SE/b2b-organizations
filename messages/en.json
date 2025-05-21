@@ -417,5 +417,5 @@
   "store/b2b-organizations.user-widget.status.on-hold": "On Hold",
   "store/b2b-organizations.warning-topbar-inative-org.message": "Your organization's account is paused, and you cannot complete purchases now.",
   "admin/b2b-organizations.costCenter-details.table.availableShippingPolicies": "Available Shipping Policies",
-  "admin/b2b-organizations.costCenter-details.table.assignedToCC": "Assigned to Cost Center"
+  "admin/b2b-organizations.costCenter-details.table.assignedToCC": "Assigned to Organization Unit"
 }

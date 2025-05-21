@@ -826,7 +826,7 @@ const CostCenterDetails: FunctionComponent = () => {
 
       <PageBlock variation="half" title="Shipping Policies">
         <div>
-          <h4 className="t-heading-4 mt0 mb0">Assigned to Cost Center</h4>
+          <h4 className="t-heading-4 mt0 mb0">Assigned to Organization Unit</h4>
           <Table
             fullWidth
             schema={shippingPolicySchema}
