@@ -354,6 +354,12 @@ export const costCenterMessages = defineMessages({
   receiverName: {
     id: `${adminPrefix}costCenter-details.table.column-address.receiverName`,
   },
+   availableShippingPolicies: {
+    id: `${adminPrefix}costCenter-details.table.availableShippingPolicies`,
+  },
+   assignedToCC: {
+    id: `${adminPrefix}costCenter-details.table.assignedToCC`,
+  },
 })
 
 export const organizationRequestMessages = defineMessages({

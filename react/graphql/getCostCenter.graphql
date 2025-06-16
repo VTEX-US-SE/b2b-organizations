@@ -36,5 +36,10 @@ query GetCostCenter($id: ID!) {
       useOnRegistration
     }
     stateRegistration
+    shippingPolicies{
+      shippingPolicyId
+      name
+      shippingMethod
+    }
   }
 }

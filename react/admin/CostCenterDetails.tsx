@@ -12,6 +12,8 @@ import {
   ModalDialog,
   Toggle,
   Tag,
+  Table,
+  IconCheck
 } from 'vtex.styleguide'
 import { useToast } from '@vtex/admin-ui'
 import { useIntl, FormattedMessage } from 'react-intl'
@@ -41,11 +43,19 @@ import GET_MARKETING_TAGS from '../graphql/getMarketingTags.graphql'
 import DELETE_COST_CENTER from '../graphql/deleteCostCenter.graphql'
 import GET_LOGISTICS from '../graphql/getLogistics.graphql'
 import GET_B2B_CUSTOM_FIELDS from '../graphql/getB2BCustomFields.graphql'
-import { joinById } from './OrganizationDetails'
+import GET_SHIPPING_POLICIES from '../graphql/getShippingPolicies.graphql'
+
+import { CellRendererProps, joinById } from './OrganizationDetails'
 import CustomFieldInput from './OrganizationDetailsCustomField'
 import CostCenterAddressList from './CostCenterAddressList'
 
 const CSS_HANDLES = ['businessDocument', 'stateRegistration'] as const
+
+type ShippingPolicy = {
+  shippingPolicyId: string
+  name: string
+  shippingMethod: string
+}
 
 const CostCenterDetails: FunctionComponent = () => {
   const { formatMessage } = useIntl()
@@ -95,6 +105,8 @@ const CostCenterDetails: FunctionComponent = () => {
 
   const [tags, setTags] = useState([] as string[])
   const [tagName, setTagName] = useState('')
+  const [shippingPoliciesState, setShippingPoliciesState] = useState<ShippingPolicy[]>([])
+  const [shippingPoliciesOptions, setShippingPoliciesOptions] = useState<ShippingPolicy[]>([])
 
   const { data, loading, refetch } = useQuery(GET_COST_CENTER, {
     variables: { id: params?.id },
@@ -114,6 +126,11 @@ const CostCenterDetails: FunctionComponent = () => {
   )
 
   const { data: logisticsData } = useQuery(GET_LOGISTICS, { ssr: false })
+
+  const { data: shippingPolicesData } = useQuery<{ getShippingPolicies: ShippingPolicy[] }>(GET_SHIPPING_POLICIES, {
+    ssr: false,
+    fetchPolicy: 'network-only',
+  })
 
   useQuery(GET_MARKETING_TAGS, {
     skip: !params?.id,
@@ -164,6 +181,8 @@ const CostCenterDetails: FunctionComponent = () => {
   }
 
   useEffect(() => {
+
+    console.log("THE CC DATA: ", JSON.stringify(data, null, 2));
     if (!data?.getCostCenterById?.addresses?.length) return
 
     handleSetAddresses(data.getCostCenterById.addresses)
@@ -186,6 +205,42 @@ const CostCenterDetails: FunctionComponent = () => {
     })
   }, [data])
 
+  //CostCenter shipping policies
+
+  useEffect(() => {
+
+    console.log("API DATA: ", shippingPolicesData)
+
+    if (shippingPolicesData?.getShippingPolicies) {
+      const formatted = shippingPolicesData.getShippingPolicies.map((method) => ({
+        shippingPolicyId: method.shippingPolicyId,
+        name: method.name,
+        shippingMethod: method.shippingMethod,
+      }))
+
+      setShippingPoliciesOptions(formatted)
+      console.log('USE EFFECT:', formatted)
+    }
+  }, [shippingPolicesData])
+
+  useEffect(() => {
+    if (data?.getCostCenterById?.shippingPolicies) {
+      const savedPolicies = data.getCostCenterById.shippingPolicies
+      console.log("SAVED DATA: ", savedPolicies)
+
+      const selected = shippingPoliciesOptions
+        .filter(policy =>
+          savedPolicies.some(
+            (saved: ShippingPolicy) => saved.shippingMethod === policy.shippingMethod
+          )
+        )
+        .map(policy => ({ ...policy }))
+      console.log("setShippingPoliciesState 122:", selected)
+      setShippingPoliciesState(selected)
+
+    }
+  }, [data, shippingPoliciesOptions])
+
   const navigateToParentOrganization = () => {
     navigate({
       page: 'admin.app.b2b-organizations.organization-details',
@@ -196,7 +251,7 @@ const CostCenterDetails: FunctionComponent = () => {
   const handleUpdateCostCenter = () => {
     setLoadingState(true)
     const _addresses = [...addresses]
-
+    console.log("MUTATE VAR:", shippingPoliciesState)
     _addresses.sort(item => (item.checked ? -1 : 1))
     const variables = {
       id: params.id,
@@ -211,6 +266,11 @@ const CostCenterDetails: FunctionComponent = () => {
         businessDocument,
         customFields: customFieldsState,
         stateRegistration,
+        shippingPolicies: shippingPoliciesState.map((policy) => ({
+          shippingPolicyId: policy.shippingPolicyId,
+          name: policy.name,
+          shippingMethod: policy.shippingMethod
+        }))
       },
     }
 
@@ -518,7 +578,7 @@ const CostCenterDetails: FunctionComponent = () => {
     setCustomFieldsState(customFieldsToShow)
   }, [
     data?.getCostCenterById?.customFields &&
-      defaultCustomFieldsData?.getB2BSettings.costCenterCustomFields,
+    defaultCustomFieldsData?.getB2BSettings.costCenterCustomFields,
   ])
 
   const handleCustomFieldsUpdate = (
@@ -530,6 +590,84 @@ const CostCenterDetails: FunctionComponent = () => {
     newCustomFields[index] = customField
     setCustomFieldsState(newCustomFields)
   }
+  const shippingPolicySchema = {
+    properties: {
+      name: {
+        title: 'Name',
+        type: 'string',
+      },
+    },
+  }
+
+  const handleRemoveShippingPolicies = (rowParams: {
+    selectedRows: ShippingPolicy[]
+  }) => {
+    const { selectedRows = [] } = rowParams
+    const shippingPoliciesToRemove: string[] = []
+
+    selectedRows.forEach((row) => {
+      shippingPoliciesToRemove.push(row.shippingMethod)
+    })
+
+    const newShippingPolicies = shippingPoliciesState.filter(
+      (policy) => !shippingPoliciesToRemove.includes(policy.shippingMethod)
+    )
+
+    setShippingPoliciesState(newShippingPolicies)
+  }
+
+  const handleAddShippingPolicies = (rowParams: {
+    selectedRows: ShippingPolicy[]
+  }) => {
+    const { selectedRows = [] } = rowParams
+    const newShippingPolicies: ShippingPolicy[] = []
+
+    selectedRows.forEach((row) => {
+
+      console.log("CHECK: ", shippingPoliciesState)
+      if (
+        !shippingPoliciesState.some(
+          (policy) => policy.shippingMethod === row.shippingMethod
+        )
+      ) {
+        newShippingPolicies.push({
+          shippingPolicyId: row.shippingPolicyId,
+          name: row.name,
+          shippingMethod: row.shippingMethod,
+        })
+      }
+
+      console.log("PUSH: ", newShippingPolicies)
+    })
+
+    setShippingPoliciesState([...shippingPoliciesState, ...newShippingPolicies])
+  }
+
+  const getShippingPolicySchema = () => {
+    const cellRenderer = ({
+      rowData: { name },
+    }: CellRendererProps<ShippingPolicy>) => {
+      const assigned = shippingPoliciesState.some(
+        policy => policy.name === name
+      );
+
+      return (
+        <span className={assigned ? 'c-disabled' : ''}>
+          {name}
+          {assigned && <IconCheck />}
+        </span>
+      );
+    };
+
+    return {
+      properties: {
+        name: {
+          title: "Name",
+          cellRenderer,
+        },
+      },
+    };
+  };
 
   if (!data) {
     return (
@@ -684,6 +822,45 @@ const CostCenterDetails: FunctionComponent = () => {
           handleEditAddressModal={handleEditAddressModal}
           handleDeleteAddressModal={handleDeleteAddressModal}
         />
+      </PageBlock>
+
+      <PageBlock variation="half" title="Shipping Policies">
+        <div>
+          <h4 className="t-heading-4 mt0 mb0">Assigned to Organization Unit</h4>
+          <Table
+            fullWidth
+            schema={shippingPolicySchema}
+            items={shippingPoliciesState}
+            bulkActions={{
+              texts: {
+                rowsSelected: (qty: number) => <span>Selected rows: {qty}</span>,
+              },
+              main: {
+                label: 'Remove',
+                handleCallback: handleRemoveShippingPolicies,
+              },
+            }}
+          />
+        </div>
+        <div>
+          <h4 className="t-heading-4 mt0 mb0">Available Shipping Policies</h4>
+
+          <Table
+            fullWidth
+            schema={getShippingPolicySchema()}
+            items={shippingPoliciesOptions}
+            loading={loading}
+            bulkActions={{
+              texts: {
+                rowsSelected: (qty: number) => <span>Selected rows: {qty}</span>,
+              },
+              main: {
+                label: 'Add',
+                handleCallback: handleAddShippingPolicies,
+              },
+            }}
+          />
+        </div>
       </PageBlock>
 
       <PageBlock title={formatMessage(orgaizationMessages.customFieldsTitle)}>
@@ -841,7 +1018,7 @@ const CostCenterDetails: FunctionComponent = () => {
         </p>
       </ModalDialog>
 
-      {/* Delete Cost Center Modal */}
+      {/* Delete Organization Unit Modal */}
       <ModalDialog
         centered
         confirmation={{

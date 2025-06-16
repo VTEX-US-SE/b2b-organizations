@@ -1,31 +1,58 @@
 import type { ChangeEvent } from 'react'
 import React, { Fragment, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { PageBlock, Table } from 'vtex.styleguide'
+import { PageBlock, Table, Dropdown } from 'vtex.styleguide'
 import { useQuery } from 'react-apollo'
+import { useRuntime } from 'vtex.render-runtime'
 
 import { organizationMessages as messages } from '../utils/messages'
 import { organizationBulkAction } from '../utils/organizationBulkAction'
+import GET_ORGANIZATION from '../../graphql/getOrganization.graphql'
 import GET_COLLECTIONS from '../../graphql/getCollections.graphql'
+import GET_COST_CENTERS from '../../graphql/getCostCentersByOrganizationId.graphql'
 
 export interface Collection {
   collectionId: string
   name: string
 }
 
+interface SelectedOrgCostCenterDetails {
+  id: string
+  orgId: string
+  costId: string
+  name: string
+}
+
+interface DropdownOption {
+  value: string
+  label: string
+}
+
 const OrganizationDetailsCollections = ({
   getSchema,
   collectionsState,
   setCollectionsState,
+  orgCostCenterState,
+  setOrgCostCenterState,
+  isOrganizationView
 }: {
   getSchema: (argument?: any) => any
   collectionsState: Collection[]
   setCollectionsState: (value: any) => void
+  orgCostCenterState: SelectedOrgCostCenterDetails
+  setOrgCostCenterState: (value: any) => void
+  isOrganizationView: boolean
 }) => {
   /**
    * Hooks
    */
   const { formatMessage } = useIntl()
+
+  const {
+    // culture: { country },
+    route: { params },
+    // navigate,
+  } = useRuntime()
   /**
    * States
    */
@@ -36,9 +63,35 @@ const OrganizationDetailsCollections = ({
     pageSize: 25,
   })
 
+  const [orgOptions, setOrgOptions] = useState(
+    [] as DropdownOption[]
+  )
+
+  const [costCenterOptions, setCostCenterOptions] = useState(
+    [] as DropdownOption[]
+  )
+
+  const [combinedOptions, setCombinedOptions] = useState([] as DropdownOption[]);
+
+  //hard coding labels. We have to use locale later
+  const OrgCostAddLabel = isOrganizationView ? "Add to org" : "Add to Organization Unit";
+  const OrgCostRemoveLabel = isOrganizationView ? "Remove from org" : "Remove from Organization Unit";
+  const OrgCostAssignLabel = isOrganizationView ? "Assigned to organization" : "Assigned to organization unit";
+  const prefixIndex = 0;
+
   /**
    * Queries
    */
+  const { data: organizationData, loading: orgLoading } = useQuery(
+    GET_ORGANIZATION,{
+    variables: { id: params?.id },
+    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
+    skip: !params?.id,
+    ssr: false,
+    }
+  )
+
   const {
     data: collectionsData,
     refetch: refetchCollections,
@@ -49,9 +102,34 @@ const OrganizationDetailsCollections = ({
     ssr: false,
   })
 
+  const {
+    data: costCentersData,
+    loading:costCenterLoading,
+  } = useQuery(GET_COST_CENTERS, {
+    variables: { id: params?.id },
+
+    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
+    skip: !params?.id,
+    ssr: false,
+  })
+
   /**
    * Effects
    */
+
+  useEffect(() => {
+    if (!organizationData?.getOrganizationById) {
+      return
+    }
+
+    const data = organizationData?.getOrganizationById
+
+    const options = [{ label: data.name, value: data.id }]
+
+    setOrgOptions([...options])
+
+  }, [organizationData])
 
   useEffect(() => {
     if (!collectionsData?.collections?.items?.length) {
@@ -66,9 +144,32 @@ const OrganizationDetailsCollections = ({
     setCollectionOptions(collections)
   }, [collectionsData])
 
+  useEffect(() => {
+      if (
+        !costCentersData?.getCostCentersByOrganizationId?.data?.length
+      ) {
+        return
+      }
+
+      const data = costCentersData.getCostCentersByOrganizationId.data
+
+      const options = data.map((costCenter: any) => {
+        const prefixSpace = "\u00A0\u00A0\u00A0"; //quick fix has provided for organization unit alignment. Will check this style issue later
+        const prefixCC = " - Organization Unit";
+        return { label: prefixSpace + costCenter.name + prefixCC, value: costCenter.id }
+      })
+
+      setCostCenterOptions([...options])
+    }, [costCentersData])
+
+  useEffect(() => {
+    setCombinedOptions([...orgOptions, ...costCenterOptions]);
+  }, [orgOptions, costCenterOptions]);
+
   /**
    * Functions
    */
+
   const handleRemoveCollections = (rowParams: any) => {
     const { selectedRows = [] } = rowParams
     const collectionsToRemove = [] as string[]
@@ -130,6 +231,7 @@ const OrganizationDetailsCollections = ({
     })
   }
 
+
   const handleAddCollections = (rowParams: any) => {
     const { selectedRows = [] } = rowParams
     const newCollections = [] as Collection[]
@@ -147,12 +249,40 @@ const OrganizationDetailsCollections = ({
     setCollectionsState([...collectionsState, ...newCollections])
   }
 
+  const handleOrgCostCenterChange = (_: any, v: string) => {
+    setOrgCostCenterState((prevState:any) => ({ ...prevState, id: v }));
+    const newPage = 1
+    setCollectionPaginationState({
+      ...collectionPaginationState,
+      page: newPage,
+    })
+
+    refetchCollections({
+      ...collectionPaginationState,
+      page: newPage,
+    })
+  };
+
   return (
     <Fragment>
-      <PageBlock variation="half" title={formatMessage(messages.collections)}>
+      <h2 className="mt6 t-heading-3">
+        {formatMessage(messages.collections)}
+      </h2>
+      <div className="flex justify-between items-center mt6 mb6">
+        <Dropdown
+          label="Choose Organization/Organization Unit"
+          placeholder={"Choose"}
+          disabled={orgLoading || costCenterLoading}
+          options={combinedOptions}
+          value={orgCostCenterState?.id ? orgCostCenterState?.id : combinedOptions[prefixIndex]?.value}
+          onChange={handleOrgCostCenterChange}
+        />
+      </div>
+      <PageBlock variation="half">
         <div>
           <h4 className="t-heading-4 mt0 mb0">
-            <FormattedMessage id="admin/b2b-organizations.organization-details.assigned-to-org" />
+          {OrgCostAssignLabel}
+            {/* <FormattedMessage id="admin/b2b-organizations.organization-details.assigned-to-org" /> */}
           </h4>
           <Table
             fullWidth
@@ -160,7 +290,9 @@ const OrganizationDetailsCollections = ({
             items={collectionsState}
             bulkActions={organizationBulkAction(
               handleRemoveCollections,
-              messages.removeFromOrg,
+              {
+                id: OrgCostRemoveLabel,
+              },
               formatMessage
             )}
           />
@@ -197,7 +329,9 @@ const OrganizationDetailsCollections = ({
             }}
             bulkActions={organizationBulkAction(
               handleAddCollections,
-              messages.addToOrg,
+              {
+                id: OrgCostAddLabel,
+              },
               formatMessage
             )}
           />

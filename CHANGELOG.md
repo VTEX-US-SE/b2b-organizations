@@ -69,13 +69,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Admin Cost Center addresses UI
+- Admin Organization Unit addresses UI
 
 ## [1.36.0] - 2024-10-16
 
 ### Added
 
-- `Full Impersonation` Organization Setting, this will allow a Impersonator to also Switch between the User's Organization/Cost Center
+- `Full Impersonation` Organization Setting, this will allow a Impersonator to also Switch between the User's Organization/Organization Unit
 
 ## [1.35.2] - 2024-10-15
 
@@ -125,7 +125,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Feat
 
-- Changes listing of custom fields from organization to cost center
+- Changes listing of custom fields from organization to organization unit
 
 ## [1.32.0] - 2024-07-17
 
@@ -157,7 +157,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Save new address within the Cost Center in the store
+- Save new address within the Organization Unit in the store
 
 ## [1.31.4] - 2024-05-23
 
@@ -169,7 +169,7 @@ Arabic, Bulgarian, Catalan, Czech, Danish, German, Greek, English, Spanish, Finn
 
 ### Fixed
 
-- Save add, edit and delete address within the Cost Center in admin
+- Save add, edit and delete address within the Organization Unit in admin
 
 ### Fixed
 
@@ -177,7 +177,7 @@ Arabic, Bulgarian, Catalan, Czech, Danish, German, Greek, English, Spanish, Finn
 
 ### Added
 
-- Loading indicators for admin organization details: cost centers, collections, payment terms, price tables, and sellers
+- Loading indicators for admin organization details: organization units, collections, payment terms, price tables, and sellers
 
 ## [1.31.2] - 2024-03-14
 
@@ -367,7 +367,7 @@ Arabic, Bulgarian, Catalan, Czech, Danish, German, Greek, English, Spanish, Finn
 
 ### Added
 
-- Added CssHandle class to cost center details
+- Added CssHandle class to organization unit details
 
 ## [1.22.6] - 2023-03-28
 
@@ -379,7 +379,7 @@ Arabic, Bulgarian, Catalan, Czech, Danish, German, Greek, English, Spanish, Finn
 
 ### Added
 
-- Added CssHandle class to parent container of my account cost center creation
+- Added CssHandle class to parent container of my account organization unit creation
 
 ### Changed
 
@@ -415,7 +415,7 @@ Arabic, Bulgarian, Catalan, Czech, Danish, German, Greek, English, Spanish, Finn
 
 Custom Fields:
 
-- Added custom fields to save more information when creating a new cost center or organization
+- Added custom fields to save more information when creating a new organization unit or organization
 - Custom fields not required fields on registration and could be show/hidden for the customer
 - Updated admin-ui package to the latest version, which is required to make the table work
 - Fixed breaking changes with Toast component
@@ -503,13 +503,13 @@ Custom Fields:
 
 ### Fixed
 
-- Fixed on user widget label (cost center) and limit the number of organizations by 15
+- Fixed on user widget label (organization unit) and limit the number of organizations by 15
 
 ## [1.16.0] - 2022-10-26
 
 ### Added
 
-- Added the state registration field to the cost center UI
+- Added the state registration field to the organization unit UI
 
 ## [1.15.0] - 2022-10-21
 
@@ -547,7 +547,7 @@ Custom Fields:
 
 ### Added
 
-- Added the marketing tags handling on the cost center details
+- Added the marketing tags handling on the organization unit details
 
 ## [1.13.1] - 2022-09-28
 
@@ -601,7 +601,7 @@ Custom Fields:
 
 ### Added
 
-- UI support for organization `tradeName` and cost center `phoneNumber` fields
+- UI support for organization `tradeName` and organization unit `phoneNumber` fields
 
 ## [1.10.3] - 2022-06-22
 
@@ -674,7 +674,7 @@ Custom Fields:
 
 ### Added
 
-- Added a new feature on creating the new address on the cost center which allows the user to set as the default address the new one.
+- Added a new feature on creating the new address on the organization unit which allows the user to set as the default address the new one.
 
 ## [1.5.0] - 2022-04-15
 
@@ -692,7 +692,7 @@ Custom Fields:
 
 ### Added
 
-- UI for new cost center `businessDocument` field
+- UI for new organization unit `businessDocument` field
 
 ## [1.2.2] - 2022-03-28
 
@@ -741,7 +741,7 @@ Added default shipping address UI option to my account and admin
 
 ### Fixed
 
-- After adding a cost center in the storefront UI, it will immediately be shown in the cost centers dropdown menu when adding or editing a user
+- After adding a organization unit in the storefront UI, it will immediately be shown in the organization units dropdown menu when adding or editing a user
 
 ## [1.0.0] - 2022-02-17
 
@@ -762,8 +762,8 @@ Added default shipping address UI option to my account and admin
 - Better validation for email addresses in forms
 - Better validation for required fields in forms
 - Ensure forms cannot be submitted multiple times by clicking multiple times
-- Ensure cost center addresses can be edited by org admin
-- Payment term toggle in admin cost center details page no longer behaves erratically
+- Ensure organization unit addresses can be edited by org admin
+- Payment term toggle in admin organization unit details page no longer behaves erratically
 
 ## [0.6.2] - 2022-01-21
 
@@ -791,11 +791,11 @@ Added default shipping address UI option to my account and admin
 
 ### Added
 
-- Organization admin can enable/disable specific payment term options per cost center
+- Organization admin can enable/disable specific payment term options per organization unit
 
 ### Fixed
 
-- Bug preventing cost center details page in admin from rendering
+- Bug preventing organization unit details page in admin from rendering
 
 ## [0.4.0] - 2021-12-06
 
@@ -824,17 +824,17 @@ Added default shipping address UI option to my account and admin
 
 - `b2b-user-widget` block and component to show logged in user's organization details
 - Additional permission checks to storefront UI
-- Improved breadcrumb on cost center details page (storefront and admin)
+- Improved breadcrumb on organization unit details page (storefront and admin)
 
 ## [0.1.0] - 2021-11-09
 
 ### Added
 
-- Storefront UI for B2B customer admins to manage their organization (cost centers and users)
+- Storefront UI for B2B customer admins to manage their organization (organization units and users)
 
 ### Fixed
 
-- Store admin can now delete cost center addresses
+- Store admin can now delete organization unit addresses
 
 ## [0.0.4] - 2021-10-29
 

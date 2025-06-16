@@ -16,7 +16,7 @@ In the B2B model, sales goals go beyond a high order conversion rate. They inclu
 
 B2B commerce relations are usually complex and often require a customized service. Therefore, grouping different users from the same company under an organization, and defining custom payment methods, product selections, and prices for each customer are common tasks in this scenario.
 
-The **B2B Organizations** app enables you to group B2B users into organizations. You can assign specific payment methods, price tables, and product collections to each organization, allowing all of the organizations users to share the same commercial conditions. Each organization is further segmented into one or more cost centers, with its own shipping addresses.
+The **B2B Organizations** app enables you to group B2B users into organizations. You can assign specific payment methods, price tables, and product collections to each organization, allowing all of the organizations users to share the same commercial conditions. Each organization is further segmented into one or more organization units, with its own shipping addresses.
 
 ## Before you start
 
@@ -165,7 +165,7 @@ The **B2B Organizations** app adds the following functionalities and components 
   </tr>
   <tr>
     <td rowspan="5">Organization Details page</td>
-    <td>Manage Cost Centers associated with organizations</td>
+    <td>Manage Organization Units associated with organizations</td>
   </tr>
   <tr>
     <td>Manage Collections associated with organizations</td>
@@ -187,7 +187,7 @@ The **B2B Organizations** app adds the following functionalities and components 
     <td>B2B store administrator or developers</td>
     <td><a href="https://developers.vtex.com/vtex-developer-docs/docs/vtex-b2b-organizations#master-data-v2">Master Data v2</a></td>
     <td>Master Data API v2</td>
-    <td>Retrieve and edit information on organization requests, organizations, and cost centers stored in Master Data v2</td>
+    <td>Retrieve and edit information on organization requests, organizations, and organization units stored in Master Data v2</td>
   </tr>
   <tr>
     <td rowspan="6">B2B customer (organization user) with required permissions</td>
@@ -200,7 +200,7 @@ The **B2B Organizations** app adds the following functionalities and components 
     <td>Manage Organization</td>
   </tr>
   <tr>
-    <td>Manage Cost Centers</td>
+    <td>Manage Organization Units</td>
   </tr>
   <tr>
     <td>Manage Users</td>
@@ -219,13 +219,13 @@ The **B2B Organizations** app adds the following functionalities and components 
 
 ### VTEX Admin
 
-After installing and setting up the **B2B Organizations** app, its VTEX Admin capabilities can be found by accessing **Account Settings > B2B Organizations & Cost Centers**.
+After installing and setting up the **B2B Organizations** app, its VTEX Admin capabilities can be found by accessing **Account Settings > B2B Organizations & Organization Units**.
 
 #### Organization Requests
 
-To request the creation of an organization, B2B customers can use the page available at `/organization-request`. This page allows customers to request an organization creation and its cost center. Add `/organization-request` to your store’s domain to access it.
+To request the creation of an organization, B2B customers can use the page available at `/organization-request`. This page allows customers to request an organization creation and its organization unit. Add `/organization-request` to your store’s domain to access it.
 
-Once this step is done by the customer, B2B store administrators may review the organization request by going to **VTEX Admin** > **Account Settings** > **B2B Organizations & Cost Centers** > **Organization Requests** (or at `/admin/b2b-organizations/requests`).
+Once this step is done by the customer, B2B store administrators may review the organization request by going to **VTEX Admin** > **Account Settings** > **B2B Organizations & Organization Units** > **Organization Requests** (or at `/admin/b2b-organizations/requests`).
 
 In this page, they can view a list of all the organization requests placed in their store.
 
@@ -250,9 +250,9 @@ If the organization request is declined, the request status will be changed to *
 The **Organizations** page includes a list of all the organizations created in your store and their respective status, and also allows store administrators to:
 
 - [Add organizations](#add-organization).
-- Access the [Organization details](#organization-details) page, which includes organization data, cost centers, collections, payment terms, price tables and users.
+- Access the [Organization details](#organization-details) page, which includes organization data, organization units, collections, payment terms, price tables and users.
 
-To access the page, go to **Account Settings** > **B2B Organizations & Cost Centers** > **Organizations** in the VTEX Admin (or at `/admin/b2b-organizations/organizations`).
+To access the page, go to **Account Settings** > **B2B Organizations & Organization Units** > **Organizations** in the VTEX Admin (or at `/admin/b2b-organizations/organizations`).
 
 ![04-organizations](https://user-images.githubusercontent.com/77292838/159766661-63f7191a-51c4-49d7-a34d-d909456f2692.png)
 
@@ -273,32 +273,32 @@ You can manually create a new organization on the **Organizations** page. Follow
 1. Click on the `New` button.
 2. Fill in the required information about the new organization, as illustrated in the image below.
    - **Name of organization:** name of the organization you want to create.
-   - **Name of cost center:** name of the initial cost center associated with the organization.
-   - **Country:** country where the cost center is located.
-   - **ZIP:** postal code of the cost center address.
-   - **Address Line 1:** primary address information, including street number and street name where the cost center is located.
+   - **Name of organization unit:** name of the initial organization unit associated with the organization.
+   - **Country:** country where the organization unit is located.
+   - **ZIP:** postal code of the organization unit address.
+   - **Address Line 1:** primary address information, including street number and street name where the organization unit is located.
    - **Address Line 2:** optional field for additional address information.
-   - **City:** city where the cost center is located. This is filled in automatically based on the ZIP code informed.
-   - **State:** state where the cost center is located. This is filled in automatically based on the ZIP code informed.
+   - **City:** city where the organization unit is located. This is filled in automatically based on the ZIP code informed.
+   - **State:** state where the organization unit is located. This is filled in automatically based on the ZIP code informed.
    - **Receiver:** name of the person that will receive orders in the informed address.
 3. Click on `Add`.
 
 ![05-add-organization](https://user-images.githubusercontent.com/77292838/159766663-e1b2005a-0c2d-4bec-84ad-612007f17d64.gif)
 
-> ℹ️ Additional cost centers and addresses may be added after creating the organization, as explained in the next section of this documentation.
+> ℹ️ Additional organization units and addresses may be added after creating the organization, as explained in the next section of this documentation.
 
 #### Organization Details
 
 In the **Organizations Details** page, you can see and edit the information of an existing organization:
 
 - [Organization Name and Status](#organization-name-and-status)
-- [Cost Centers](#cost-centers)
+- [Organization Units](#cost-centers)
 - [Collections](#collections)
 - [Payment Terms](#payment-terms)
 - [Price Tables](#price-tables)
 - [Users ](#users)
 
-You can access this page by going to **Account Settings** > **B2B Organizations & Cost Centers** > **Organizations** in the VTEX Admin and clicking on the organization whose details you want to view, or on <img src="https://user-images.githubusercontent.com/77292838/159766633-dfcb818f-6bd7-4cd0-92dc-9c682fb50d04.png" width="10" alt-text="00-ellipsis"/> > `View`.
+You can access this page by going to **Account Settings** > **B2B Organizations & Organization Units** > **Organizations** in the VTEX Admin and clicking on the organization whose details you want to view, or on <img src="https://user-images.githubusercontent.com/77292838/159766633-dfcb818f-6bd7-4cd0-92dc-9c682fb50d04.png" width="10" alt-text="00-ellipsis"/> > `View`.
 
 > ℹ️ Note that assigning collections, payment terms, and price tables to an organization is optional. If these are not assigned, users of the organization will see the stores default catalog, have access to all payment methods, and see the store's default pricing.
 
@@ -312,67 +312,67 @@ In the top section of the page, you can view the following information:
 
 ![06-organization-name-status](https://user-images.githubusercontent.com/77292838/159766675-bd899388-7537-427d-af37-fc048aaf8636.png)
 
-##### Cost Centers
+##### Organization Units
 
-In the **Cost Centers** section, you can view all the cost centers associated with the organization. VTEX Admin users can view and manage cost centers for any organization.
+In the **Organization Units** section, you can view all the organization units associated with the organization. VTEX Admin users can view and manage organization units for any organization.
 
 ![07-cost-centers](https://user-images.githubusercontent.com/77292838/159766678-0fd6c361-e1e6-470b-a9fc-c98b530c05e9.png)
 
-> ℹ️ Each organization must have at least one cost center.
+> ℹ️ Each organization must have at least one organization unit.
 
-By default, each cost center will allow all of the [payment terms](#payment-terms) that have been assigned to the parent organization. However, **Organization Admin** users have the ability to enable or disable individual payment terms at the cost center level  see [Manage Cost Centers](#manage-cost-centers) for more information on this.
+By default, each organization unit will allow all of the [payment terms](#payment-terms) that have been assigned to the parent organization. However, **Organization Admin** users have the ability to enable or disable individual payment terms at the organization unit level  see [Manage Organization Units](#manage-cost-centers) for more information on this.
 
-To create a new cost center, follow the steps below.
+To create a new organization unit, follow the steps below.
 
 1. Click on the `New` button.
-2. Fill in the required information about the new cost center, as illustrated in the image below.
-   - **Name:** name of the cost center.
-   - **Country:** country where the cost center is located.
-   - **ZIP:** postal code of the cost center address.
-   - **Address Line 1:** primary address information, including street number and street name where the cost center is located.
+2. Fill in the required information about the new organization unit, as illustrated in the image below.
+   - **Name:** name of the organization unit.
+   - **Country:** country where the organization unit is located.
+   - **ZIP:** postal code of the organization unit address.
+   - **Address Line 1:** primary address information, including street number and street name where the organization unit is located.
    - **Address Line 2:** optional field for additional address information.
-   - **City:** city where the cost center is located. This is filled in automatically based on the ZIP code informed.
-   - **State:** state where the cost center is located. This is filled in automatically based on the ZIP code informed.
+   - **City:** city where the organization unit is located. This is filled in automatically based on the ZIP code informed.
+   - **State:** state where the organization unit is located. This is filled in automatically based on the ZIP code informed.
    - **Receiver:** name of the person that will receive orders in the informed address.
 3. Click on `Add`.
 
 ![08-add-cost-center](https://user-images.githubusercontent.com/77292838/159766680-5eb39381-a7da-4278-b8da-8cc7efe3e90a.gif)
 
-##### Cost Center Details
+##### Organization Unit Details
 
-You can view or edit the details of an existing cost center by clicking on it in the **Organization Details** page.
+You can view or edit the details of an existing organization unit by clicking on it in the **Organization Details** page.
 
-This will lead you to the **Cost Center Details** page, where you can:
+This will lead you to the **Organization Unit Details** page, where you can:
 
-- View or edit the cost centers **Name** and **Addresses**.
-- View or edit the cost center's **Business Document**.
-- Add a new shipping address associated with the cost center.
-- Delete the cost center
+- View or edit the organization units **Name** and **Addresses**.
+- View or edit the organization unit's **Business Document**.
+- Add a new shipping address associated with the organization unit.
+- Delete the organization unit
 
 ![09-cost-center-details](https://user-images.githubusercontent.com/77292838/159766691-4557a032-a38c-4abb-a5a1-29019b833ad2.png)
 
-The optional **Business Document** field may be used to store a Tax ID, VAT ID, CNPJ, or similar business identifier. If a Business Document is present in a user's cost center, it will be applied as the `corporateDocument` in the user's profile and therefore attached to any orders placed by the user.
+The optional **Business Document** field may be used to store a Tax ID, VAT ID, CNPJ, or similar business identifier. If a Business Document is present in a user's organization unit, it will be applied as the `corporateDocument` in the user's profile and therefore attached to any orders placed by the user.
 
-> ℹ️ The shipping addresses assigned to a cost center will be available to that cost center's users at checkout if you install [B2B Checkout Settings](https://developers.vtex.com/vtex-developer-docs/docs/vtex-b2b-checkout-settings). No other addresses will be available. Therefore, each cost center must have at least one shipping address.
+> ℹ️ The shipping addresses assigned to a organization unit will be available to that organization unit's users at checkout if you install [B2B Checkout Settings](https://developers.vtex.com/vtex-developer-docs/docs/vtex-b2b-checkout-settings). No other addresses will be available. Therefore, each organization unit must have at least one shipping address.
 
 To edit or delete an existing address, click <img src="https://user-images.githubusercontent.com/77292838/159766633-dfcb818f-6bd7-4cd0-92dc-9c682fb50d04.png" width="10" alt-text="00-ellipsis"/> next to it and select **Edit** or **Delete**.
 
-If you would like to add a new shipping address related to that cost center, follow these instructions:
+If you would like to add a new shipping address related to that organization unit, follow these instructions:
 
 1. Click on `Add new address`.
 2. Fill in the required information about the new address.
-   - **Country:** country where the cost center is located.
-   - **ZIP:** postal code of the cost center address.
-   - **Address Line 1:** primary address information, including street number and street name where the cost center is located.
+   - **Country:** country where the organization unit is located.
+   - **ZIP:** postal code of the organization unit address.
+   - **Address Line 1:** primary address information, including street number and street name where the organization unit is located.
    - **Address Line 2:** optional field for additional address information.
-   - **City:** city where the cost center is located. This is filled in automatically based on the ZIP code informed.
-   - **State:** state where the cost center is located. This is filled in automatically based on the ZIP code informed.
+   - **City:** city where the organization unit is located. This is filled in automatically based on the ZIP code informed.
+   - **State:** state where the organization unit is located. This is filled in automatically based on the ZIP code informed.
    - **Receiver:** name of the person that will receive orders in the informed address.
 3. Click on `Add`.
 
-Make sure to click `Save` in the top right of the **Cost Center Details** page after any changes.
+Make sure to click `Save` in the top right of the **Organization Unit Details** page after any changes.
 
-If you want to delete the cost center, click on `Delete` instead.
+If you want to delete the organization unit, click on `Delete` instead.
 
 ##### Collections
 
@@ -390,7 +390,7 @@ To remove a collection, select the collection you want to remove from the **Assi
 
 In this section, you can choose which [payment conditions](https://help.vtex.com/en/tutorial/how-to-configure-payment-conditions--tutorials_455?&utm_source=autocomplete) are assigned to the organization. Your selections determine which payment options are available to organization users during checkout.
 
-Note that the available payment options can be further customized per cost center by the **Organization Admin**. Check the [Manage Cost Centers](#manage-cost-centers) section for more information on this.
+Note that the available payment options can be further customized per organization unit by the **Organization Admin**. Check the [Manage Organization Units](#manage-cost-centers) section for more information on this.
 
 To add a payment term, select the option you want to add from the **Available** list and click `Add to org`.
 
@@ -414,7 +414,7 @@ To remove a price table, select the option you want to remove from the **Assigne
 
 ##### Users
 
-This section presents a list of users associated with the organization, showing their **emails**, their **roles** within the organization, and the **cost center** to which they are associated. It is worth noting that the same email can be associated with up to 949 different organizations or cost centers.
+This section presents a list of users associated with the organization, showing their **emails**, their **roles** within the organization, and the **organization unit** to which they are associated. It is worth noting that the same email can be associated with up to 949 different organizations or organization units.
 
 ![13-users-list](https://user-images.githubusercontent.com/77292838/159766707-572dd167-e948-4300-b259-1c9cd0b8a341.png)
 
@@ -424,7 +424,7 @@ To add a new user to the organization, follow these steps:
 2. Fill in the users information, as illustrated below.
    - **Name:** full name of the user.
    - **Email:** email of the user.
-   - **Cost Center:** cost center the user will be associated with.
+   - **Organization Unit:** organization unit the user will be associated with.
    - **Role:** role the user will have in the storefront. See more details on the available roles in the [Storefront Permissions documentation](https://developers.vtex.com/vtex-developer-docs/docs/vtex-storefront-permissions#available-storefront-roles).
 3. Click on `Add`.
 
@@ -437,7 +437,7 @@ To edit or remove an existing user, follow these steps:
 1. Click on the user you want to edit or delete in the **Users** list.
 2. Edit the desired information.
 
-   You can change the users **Cost Center** and their **Role**.
+   You can change the users **Organization Unit** and their **Role**.
 
    If you want to remove the user from the organization, click `Remove user` instead and skip the next step.
 
@@ -445,7 +445,7 @@ To edit or remove an existing user, follow these steps:
 
 ![15-edit-user](https://user-images.githubusercontent.com/77292838/159766713-03778c4a-370a-4c13-be4a-8f507cee0a73.png)
 
-If a user is removed from an organization, their account will continue to exist in the store, but they will no longer be assigned to an organization, a cost center, and a B2B role. Thus, they will no longer have access to details of their organization in the **My Organization** page. Instead, they will have the ability to [request the creation of a new organization](#request-new-organization), if necessary.
+If a user is removed from an organization, their account will continue to exist in the store, but they will no longer be assigned to an organization, a organization unit, and a B2B role. Thus, they will no longer have access to details of their organization in the **My Organization** page. Instead, they will have the ability to [request the creation of a new organization](#request-new-organization), if necessary.
 
 > ℹ️ As an optional feature, you can install the [Admin Customers](https://developers.vtex.com/docs/apps/vtex.admin-customers) app for additional customer management capabilities on the VTEX Admin.
 
@@ -472,7 +472,7 @@ If you want to view or edit any of these templates, follow the steps below.
 
 ### Master Data v2
 
-The **B2B Organizations** app stores information about organization requests, organizations, and cost centers in [Master Data v2](https://help.vtex.com/pt/tutorial/master-data-v2--3JJ1mlzuo88w22gO0gy0QS).
+The **B2B Organizations** app stores information about organization requests, organizations, and organization units in [Master Data v2](https://help.vtex.com/pt/tutorial/master-data-v2--3JJ1mlzuo88w22gO0gy0QS).
 
 This means that it is possible for store administrators or developers to fetch this information using the [Master Data API v2](https://developers.vtex.com/vtex-rest-api/reference/master-data-api-v2-overview), by using their **data entity name** as the value for the `data_entity_name` parameter.
 
@@ -502,15 +502,15 @@ A B2B user who is not already part of an organization can request the creation o
      - **First Name:** first name of the Organization Admin user.
      - **Last Name:** last name of the Organization Admin user.
      - **Email Address:** email address of the Organization Admin user.
-   - **Default Cost Center:** section where you must provide information about the first cost center associated with the organization.
-     - **Cost Center Name:** name of the cost center.
+   - **Default Organization Unit:** section where you must provide information about the first organization unit associated with the organization.
+     - **Organization Unit Name:** name of the organization unit.
      - **Business Document:** optional field for a business document such as a Tax ID, CNPJ, etc.
-     - **Country:** country where the cost center is located.
-     - **ZIP:** postal code of the cost center address.
-     - **Address Line 1:** primary address information, including street number and street name where the cost center is located.
+     - **Country:** country where the organization unit is located.
+     - **ZIP:** postal code of the organization unit address.
+     - **Address Line 1:** primary address information, including street number and street name where the organization unit is located.
      - **Address Line 2:** optional field for additional address information.
-     - **City:** city where the cost center is located. This is filled in automatically based on the ZIP code informed.
-     - **State:** state where the cost center is located. This is filled in automatically based on the ZIP code informed.
+     - **City:** city where the organization unit is located. This is filled in automatically based on the ZIP code informed.
+     - **State:** state where the organization unit is located. This is filled in automatically based on the ZIP code informed.
      - **Receiver:** name of the person that will receive orders in the informed address.
 4. Click `Submit`.
 
@@ -537,18 +537,18 @@ To access **My Organization**, follow the instructions below.
 
 On this page, the user with the **Organization Admin** or **Sales Admin** roles may do the following:
 
-- [Manage Cost Centers](#manage-cost-centers)
+- [Manage Organization Units](#manage-cost-centers)
 - [Manage Users](#manage-users)
 
-##### Manage Cost Centers
+##### Manage Organization Units
 
-**Organization Admin** or **Sales Admin** storefront users can find the cost centers associated with their organization in the **Cost Centers** section of the **My Organization** page.
+**Organization Admin** or **Sales Admin** storefront users can find the organization units associated with their organization in the **Organization Units** section of the **My Organization** page.
 
-To add a new cost center, they should go to **My Account > My Organization**, where they have access to the same options described in [Cost Centers](#cost-centers). It is possible to view or edit the details of an existing cost center by clicking on it, the same way as described in [Cost Center Details](#cost-center-details).
+To add a new organization unit, they should go to **My Account > My Organization**, where they have access to the same options described in [Organization Units](#cost-centers). It is possible to view or edit the details of an existing organization unit by clicking on it, the same way as described in [Organization Unit Details](#cost-center-details).
 
-**Organization Admins** may also view and/or edit the **Business Document** assigned to each cost center, as described in [Cost Center Details](#cost-center-details).
+**Organization Admins** may also view and/or edit the **Business Document** assigned to each organization unit, as described in [Organization Unit Details](#cost-center-details).
 
-In addition, **Organization Admins** can enable specific payment terms for a cost center, by using the toggle button to activate or deactivate the payment terms assigned to the organization, as shown below.
+In addition, **Organization Admins** can enable specific payment terms for a organization unit, by using the toggle button to activate or deactivate the payment terms assigned to the organization, as shown below.
 
 > ℹ️ This section will only be available on the **My Organization** page if [payment terms](#payment-terms) have previously been assigned to the organization by the VTEX Admin users.
 
@@ -568,7 +568,7 @@ In telesales, assisted sales, or customer support scenarios where the B2B custom
 
 In the **B2B Organizations** app, only users with **Sales** roles or the **Organization Admin** role may impersonate another user.
 
-This action will temporarily apply the impersonated user's email, organization, and cost center to their storefront session. It allows the impersonating users to do the following:
+This action will temporarily apply the impersonated user's email, organization, and organization unit to their storefront session. It allows the impersonating users to do the following:
 
 - Browse the store and see the prices, products, shipping addresses and payment methods that would be seen by the impersonated user.
 - Take actions on behalf of the impersonated user, such as placing orders.
@@ -583,7 +583,7 @@ To use impersonation, users with **Sales** roles or the **Organization Admin** r
 
 #### User widget
 
-To give storefront users visibility into their currently assigned organization, cost center, and role, this app provides a user widget which can be added to the account's store theme:
+To give storefront users visibility into their currently assigned organization, organization unit, and role, this app provides a user widget which can be added to the account's store theme:
 
 ![21-user-widget](https://user-images.githubusercontent.com/77292838/159766781-8edabb7e-292c-4c8e-a88e-ae937ec7db86.png)
 
