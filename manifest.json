@@ -1,7 +1,7 @@
 {
   "name": "b2b-organizations",
   "vendor": "vtex",
-  "version": "1.42.1-beta-hkignore",
+  "version": "1.43.0-beta-hkignore",
   "title": "B2B Organizations",
   "description": "App to create and manage B2B Organizations and Organization Units",
   "mustUpdateAt": "2022-08-28",
